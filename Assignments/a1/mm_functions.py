@@ -167,7 +167,8 @@ def is_human(current_player: str, game_type: str) -> bool:
 # get_updated_char_view, calculate_score, next_player, is_fully_hidden,
 # computer_chooses_solve, and remove_at_index.
 def is_one_player_game(game_type: str) -> bool:
-    """Returns True if and only if game_type represents a single person (HUMAN)
+    """Return True if and only if game_type represents a single person (HUMAN)
+    
     >>> is_one_player_game('PVE')
     False
     >>> is_one_player_game('P1')
@@ -178,4 +179,69 @@ def is_one_player_game(game_type: str) -> bool:
     
     return game_type == HUMAN
 
-def is_player()
+# def is_player():
+
+def current_player_score(p1_score: int, p2_score: int, current_player: str) -> int:
+    """Return the score of the current player, represented by parameter current_player
+    
+    >>> current_player_score(5, 6, "Player One")
+    5
+    >>> current_player_score(5, 6, "Player Two")
+    6
+    """
+    
+    if current_player == PLAYER_ONE:
+        return p1_score
+    else:
+        return p2_score
+    
+def is_bonus_letter(view: str, guessed_letter: str, message: str) -> bool:
+    """Returns True if and only if parameter guessed_letter is a bonus letter 
+    (bonus letter meaning a hidden consonant)
+    
+    >>> is_bonus_letter("^ell^", "h", "hello")
+    True
+    >>> is_bonus_letter("hell^", "h", "hello")
+    False
+    >>> is_bonus_letter("hell^", "o", "hello")
+    False
+    """
+    
+    if guessed_letter not in ALL_CONSONANTS:
+        return False # return false if guessed letter isnt a consonant(is vowel)
+    
+    if guessed_letter in message and guessed_letter not in view:
+        return True # true if g_l is in hidden msg but not in view
+    
+    return False # this shld only happen if g_l is not in msg or is shown
+
+def get_updated_char_view(view: str, message: str, char_index: int, guess:str) -> str:
+    """Return either updated character if parameter guess is at message[char_index],
+    else return original character
+    
+    len(message) - 1 > char_index > 0; 
+    
+    >>> get_updated_char_view("h^^^o", "hello", 1, "e")
+    "e"
+    >>> get_updated_char_view("h^^^o", "hello", 3, "e")
+    "^"
+    >>> get_updated_char_view("h^^^o", "hello", 3, "l")
+    "l"
+    """
+    
+    og_character = view[char_index]
+    potential_character = message[char_index]
+    
+    if og_character == HIDDEN:
+        if potential_character == guess:
+            return potential_character
+    return og_character
+
+def calculate_score(curr_score: int, num_revealed: int, move: str) -> int:
+    """Return player's updated score based on whether move is 
+    
+    
+    """
+    
+    
+        

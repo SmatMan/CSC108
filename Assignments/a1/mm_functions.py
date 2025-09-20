@@ -167,7 +167,7 @@ def is_human(current_player: str, game_type: str) -> bool:
 # get_updated_char_view, calculate_score, next_player, is_fully_hidden,
 # computer_chooses_solve, and remove_at_index.
 def is_one_player_game(game_type: str) -> bool:
-    """Return True if and only if game_type represents a single person (HUMAN)
+    """Return True if and only if `game_type` represents a single person (HUMAN)
     
     >>> is_one_player_game('PVE')
     False
@@ -182,7 +182,7 @@ def is_one_player_game(game_type: str) -> bool:
 # def is_player():
 
 def current_player_score(p1_score: int, p2_score: int, current_player: str) -> int:
-    """Return the score of the current player, represented by parameter current_player
+    """Return the score of the current player, represented by `current_player`
     
     >>> current_player_score(5, 6, "Player One")
     5
@@ -196,7 +196,7 @@ def current_player_score(p1_score: int, p2_score: int, current_player: str) -> i
         return p2_score
     
 def is_bonus_letter(view: str, guessed_letter: str, message: str) -> bool:
-    """Returns True if and only if parameter guessed_letter is a bonus letter 
+    """Returns True if and only if `guessed_letter` is a bonus letter 
     (bonus letter meaning a hidden consonant)
     
     >>> is_bonus_letter("^ell^", "h", "hello")
@@ -216,7 +216,7 @@ def is_bonus_letter(view: str, guessed_letter: str, message: str) -> bool:
     return False # this shld only happen if g_l is not in msg or is shown
 
 def get_updated_char_view(view: str, message: str, char_index: int, guess:str) -> str:
-    """Return either updated character if parameter guess is at message[char_index],
+    """Return either updated character if `guess` is at `message[char_index]`,
     else return original character
     
     len(message) - 1 > char_index > 0; 
@@ -238,10 +238,116 @@ def get_updated_char_view(view: str, message: str, char_index: int, guess:str) -
     return og_character
 
 def calculate_score(curr_score: int, num_revealed: int, move: str) -> int:
-    """Return player's updated score based on whether move is 
+    """Return player's updated score based on whether `move` is CONSONANT or VOWEL
     
+    >>> calculate_score(5, 1, 'C')
+    6
+    >>> calculate_score(4, 1, 'V')
+    3
+    
+    Precondition: move can only be 'C' or 'V' (const CONSONANT or VOWEL);
+    """
+    
+    if num_revealed == 0:
+        return curr_score # not sure if this is needed but cant hurt!
+    
+    if move == VOWEL:
+        return curr_score - VOWEL_COST
+    elif move == CONSONANT:
+        return curr_score + (CONSONANT_POINTS * num_revealed) 
+
+def opposite_player(curr_player: str) -> str:
+    """Return the opposite player to what is given. If given PLAYER_ONE,
+    return PLAYER_TWO and vice versa. This is my own helper function to make
+    next_player() a little tidier
+    
+    >>> opposite_player('Player One')
+    'Player Two'
+    >>> opposite_player('Player Two')
+    'Player One'
+    
+    Precondition: curr_player may only be 'Player One' or 'Player Two';
+    """
+    
+    return PLAYER_TWO if curr_player == PLAYER_ONE else PLAYER_ONE
+
+
+def next_player(curr_player: str, num_revealed: int, type: str) -> str:
+    """Return the next turn's player. If solo game then return current player,
+    if the current player revealed letters, return current player
+    otherwise return the next player
+    
+    >>> next_player('Player One', 1, 'P1')
+    'Player One'
+    >>> next_player('Player One', 0, 'PVP')
+    'Player Two'
+    >>> next_player('Player Two', 1, 'PVP')
+    'Player One'
     
     """
     
+    if type == HUMAN:
+        return curr_player
     
-        
+    if num_revealed > 0:
+        return curr_player
+    
+    return opposite_player(curr_player)
+
+def is_fully_hidden(view: str, index: int, message: str) -> bool:
+    """Returns True if given character is hidden in the view,
+    otherwise returns false
+    
+    >>> is_fully_hidden("^ello", 0, "hello")
+    True
+    >>> is_fully_hidden("^e^lo", 2, "hello")
+    False
+    
+    """
+    
+    og_character = message[index]
+    
+    if og_character in view:
+        return False
+    else:
+        return True
+
+def computer_chooses_solve(view: str, difficulty: str, not_guessed: str) -> bool:
+    """Returns True if and only if computer decides to solve based on 
+    `difficulty`, otherwise returns false. 
+    
+    >>> computer_chooses_solve("^ell^", "H", "bcdfghjk") #half the letters revealed
+    True
+    >>> computer_chooses_solve("^ell^", "E", "bcdfghjk") #still consonants left
+    False
+    >>> computer_chooses_solve("^ell^", "E", "") #no consonants left
+    True
+    
+    """
+    
+    if not_guessed == "": #i have no idea if this logic is right
+        return True
+    
+    if difficulty == HARD and half_revealed(view):
+        return True
+    
+    return False
+
+def remove_at_index(letters: str, index: int) -> str:
+    """Returns provided string of `letters`, minus character at provided index
+    
+    >>> remove_at_index("bcdfg", 2)
+    "bcfg"
+    >>> remove_at_index("bcdfg", 10)
+    "bcdfg"
+    
+    Precondition: 0 <= index
+    """
+    
+    if index > len(letters)-1:
+        return letters
+    
+    return letters[0:index] + letters[index+1:len(letters)] #test!!!!!
+
+    
+    

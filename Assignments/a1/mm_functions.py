@@ -181,8 +181,8 @@ def is_one_player_game(game_type: str) -> bool:
 
 # def is_player():
 
-def current_player_score(p1_score: int, p2_score: int, current_player: str) -> int:
-    """Return the score of the current player, represented by `current_player`
+def current_player_score(p1_score: int, p2_score: int, curr_player: str) -> int:
+    """Return the score of the current player, represented by `curr_player`
     
     >>> current_player_score(5, 6, "Player One")
     5
@@ -190,7 +190,7 @@ def current_player_score(p1_score: int, p2_score: int, current_player: str) -> i
     6
     """
     
-    if current_player == PLAYER_ONE:
+    if curr_player == PLAYER_ONE:
         return p1_score
     else:
         return p2_score
@@ -215,7 +215,8 @@ def is_bonus_letter(view: str, guessed_letter: str, message: str) -> bool:
     
     return False # this shld only happen if g_l is not in msg or is shown
 
-def get_updated_char_view(view: str, message: str, char_index: int, guess:str) -> str:
+def get_updated_char_view(view: str, message: str, 
+                          char_index: int, guess:str) -> str:
     """Return either updated character if `guess` is at `message[char_index]`,
     else return original character
     
@@ -238,7 +239,8 @@ def get_updated_char_view(view: str, message: str, char_index: int, guess:str) -
     return og_character
 
 def calculate_score(curr_score: int, num_revealed: int, move: str) -> int:
-    """Return player's updated score based on whether `move` is CONSONANT or VOWEL
+    """Return player's updated score based on 
+    whether `move` is CONSONANT or VOWEL
     
     >>> calculate_score(5, 1, 'C')
     6
@@ -253,7 +255,7 @@ def calculate_score(curr_score: int, num_revealed: int, move: str) -> int:
     
     if move == VOWEL:
         return curr_score - VOWEL_COST
-    elif move == CONSONANT:
+    else:
         return curr_score + (CONSONANT_POINTS * num_revealed) 
 
 def opposite_player(curr_player: str) -> str:
@@ -312,7 +314,8 @@ def is_fully_hidden(view: str, index: int, message: str) -> bool:
     else:
         return True
 
-def computer_chooses_solve(view: str, difficulty: str, not_guessed: str) -> bool:
+def computer_chooses_solve(view: str, difficulty: str, 
+                           not_guessed: str) -> bool:
     """Returns True if and only if computer decides to solve based on 
     `difficulty`, otherwise returns false. 
     
@@ -343,11 +346,9 @@ def remove_at_index(letters: str, index: int) -> str:
     
     Precondition: 0 <= index
     """
-    
+    if index < 0: # !! i sent an email about this, according to guidelines
+        # this shouldn't be needed, however the code behaviour requires it
+        return letters
     if index > len(letters)-1:
         return letters
-    
-    return letters[0:index] + letters[index+1:len(letters)] #test!!!!!
-
-    
-    
+    return letters[:index] + letters[index+1:]
